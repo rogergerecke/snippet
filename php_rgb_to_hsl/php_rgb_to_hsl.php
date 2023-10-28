@@ -1,8 +1,8 @@
 <?php
 
-function RGB2HSL(int $R = 0, int $G = 0, int $B = 0, int $a = 0): array|null
+function RGB2HSL(int $R = 0, int $G = 0, int $B = 0, int $a = 1, string $out = 'web'): array|null
 {
-
+// todo add multiplicator for web use
     // Convert the RGB byte-values to percentages
     $R = ($R / 255); //0.69411764705882352941176470588235
     $G = ($G / 255);
@@ -13,7 +13,8 @@ function RGB2HSL(int $R = 0, int $G = 0, int $B = 0, int $a = 0): array|null
     //   minimum value, and the difference of the two (chroma).
 
     // V:= Xmax:= With maximum component
-    $xMax = max($R, $G, $B);
+    $xMax = $V = max($R, $G, $B);
+
 
     // Xmin:= With minimum component
     $xMin = min($R, $G, $B);
@@ -22,28 +23,25 @@ function RGB2HSL(int $R = 0, int $G = 0, int $B = 0, int $a = 0): array|null
     $chroma = $xMax - $xMin;
 
     // L:= With mid-range (i. e. lightness)
-    $lightness = $xMax + $xMin / 2;
+    $lightness = ($xMax + $xMin) / 2;
 
-    // convert RGBA alpha to HSLA alpha percentage
+    // RGBA alpha to HSLA alpha
     $alpha = $a;
-    if (!empty($a)) {
-        $alpha = $a * 100;
-    }
+
 
     //https://en.wikipedia.org/wiki/HSL_and_HSV#External_links calculate by
     //https://gist.github.com/brandonheyer/5254516
     // value array
-    $hue = null;
-    $saturation = null;
-    $lightness = null;
+
 
     // is it achromatic // selbst auslöschend? if C = 0
-    if ($chroma == 0){
+    if ($chroma == 0) {
         return [
             'h' => 0,
             's' => 0,
-            'l' => $lightness,
-            'a' => $alpha
+            'l' => round($lightness, 2),
+            'a' => round($alpha, 2),
+            'main_base_name' => 'gray',
 
         ];
     }
@@ -51,71 +49,65 @@ function RGB2HSL(int $R = 0, int $G = 0, int $B = 0, int $a = 0): array|null
     ## SATURATION
     // calculate saturation's
     // Sv=
-    if($xMax == 0){
-        $chroma = 0;
+    if ($V == 0) {
+        $saturation = 0;
+    }
+    if($V !== 0){
+        $saturation = $chroma / $V;
     }
 
     // Sl:=
-    if($lightness == 0 or $lightness == 1){
-        $saturation = $chroma / ( 1 - abs( 2 * $lightness - 1 ) );
+    if ($lightness == 0 or $lightness == 1) {
+        $saturation = 0;
+    }
+    if ($lightness !== 0 and $lightness > 1){
+        $saturation = $chroma / (1 - abs(2 * $lightness - 1));
     }
     ##
 
     ## HUE CALC
     // calculate hue by case witch if hue in most max range R or G or B
     // red is the max
-    if ($xMax == $R){
-        $hue = 60 * fmod( ( ( $G - $B ) / $chroma ), 6 );
+    if ($V == $R) {
+        $hue = 60 * fmod((($G - $B) / $chroma), 6);
+        if ($B > $G) {
+            $hue += 360;
+        }
         return [
-            'h' => $hue,
-            's' => $saturation,
-            'l' => $lightness,
-            'a' => $alpha
+            'h' => round($hue, 3),
+            's' => round($saturation, 3),
+            'l' => round($lightness, 3),
+            'a' => round($alpha, 3),
+            'main_base_name' => 'red',
 
         ];
     }
 
     // green is the max
-    if ($xMax == $G){
-        $hue = 60 * ( ( $B - $R ) / $chroma + 2 );
+    if ($V == $G) {
+        $hue = 60 * (($B - $R) / $chroma + 2);
         return [
-            'h' => $hue,
-            's' => $saturation,
-            'l' => $lightness,
-            'a' => $alpha
+            'h' => round($hue, 3),
+            's' => round($saturation, 3),
+            'l' => round($lightness, 3),
+            'a' => round($alpha, 3),
+            'main_base_name' => 'green',
 
         ];
     }
 
     // blue is the max
-    if ($xMax == $B){
-        $hue = 60 * ( ( $R - $G ) / $chroma + 4 );
+    if ($V == $B) {
+        $hue = 60 * (($R - $G) / $chroma + 4);
         return [
-            'h' => $hue,
-            's' => $saturation,
-            'l' => $lightness,
-            'a' => $alpha
+            'h' => round($hue, 3),
+            's' => round($saturation, 3),
+            'l' => round($lightness, 3),
+            'a' => round($alpha, 3),
+            'main_base_name' => 'blue',
 
         ];
     }
 
     return null;
 }
-
-?>
-
-<!-- Example -->
-<style>
-    div {
-        width: 1rem;
-        height: 1rem;
-    }
-</style>
-
-<?php $test = RGB2HSL(222,230,170)?>
-
-Input:
-<div style="background-color: rgb(222,230,170)"></div><br>
-Output:
-<div style="background-color: hsl(<?php echo $test['h']?>,<?php echo $test['s']?>,<?php echo $test['l']?>)"></div>
-
