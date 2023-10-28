@@ -1,4 +1,4 @@
-<?php include 'php_rgb_to_hsl.php'?>
+<?php include 'RGB2HSL.php'?>
 <!-- Example -->
 <style>
     div {
@@ -7,12 +7,15 @@
     }
 </style>
 
-<?php $test = RGB2HSL(222,230,170)?>
+<?php try {
+    $test = new RGB2HSL([155, 217, 156, 1]);
+} catch (Exception $e) {
+} ?>
 
-Input: rgb(222,230,170)
-<div style="background-color: rgb(222,230,170)"></div>
+Input: rgba(<?php echo $test->getInput() ?>)
+<div style="background-color: rgba(<?php echo $test->getInput() ?>)"></div>
 <br>
 
-Output: hsla(<?php echo round($test['h'])?>, <?php echo round($test['s'])?>%, <?php echo round($test['l'])?>%, <?php echo round($test['a'])?>)
-<div style="background: hsla(<?php echo round($test['h'])?>, <?php echo round($test['s'])?>%, <?php echo round($test['l'])?>%, <?php echo round($test['a'])?>)"></div>
+Output: hsla(<?php echo $test->output['h']?>, <?php echo $test->output['s']?>%, <?php echo $test->output['l']?>%, <?php echo $test->output['a']?>)
+<div style="background: hsla(<?php echo $test->output['h']?>, <?php echo $test->output['s']?>%, <?php echo $test->output['l']?>%, <?php echo $test->output['a']?>)"></div>
 
