@@ -8,7 +8,7 @@
 </style>
 
 <?php try {
-    $test = new RGB2HSL([155, 217, 156, 1]);
+    $test = new RGB2HSL([0, 255, 0, 1]);
 } catch (Exception $e) {
 } ?>
 

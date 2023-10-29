@@ -54,7 +54,6 @@ class RGB2HSL
         // V:= Xmax:= With maximum component
         $xMax = $V = max($R, $G, $B);
 
-
         // Xmin:= With minimum component
         $xMin = min($R, $G, $B);
 
@@ -84,16 +83,14 @@ class RGB2HSL
         // Sv=
         if ($V == 0) {
             $saturation = 0;
-        }
-        if ($V !== 0) {
+        }else{
             $saturation = $chroma / $V;
         }
 
         // Sl:=
         if ($lightness == 0 or $lightness == 1) {
             $saturation = 0;
-        }
-        if ($lightness !== 0 and $lightness > 1) {
+        }else{
             $saturation = $chroma / (1 - abs(2 * $lightness - 1));
         }
         ##
