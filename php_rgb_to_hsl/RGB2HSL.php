@@ -29,7 +29,7 @@ class RGB2HSL
      */
     public function convertRGBtoHSL($rgba): bool
     {
-// todo add multiplicator for web use
+
 
         if (is_array($rgba) === FALSE) {
             throw new Exception('Required array rgba(127,12,13,0.1)');
